@@ -1,0 +1,6 @@
+Story,Task,Estimate min (hr),Estimate max (hr),Actual,Comment
+FE-1: Project Setup/Initialize frontend project (React)/basic routing/layout,1,2,,Base skeleton
+FE-2: Task List View/Implement task list view with inline status change,3,5,,Connects to backend
+FE-3: Task Form/Create & edit task form (modal/page),2,3,,Simple form with validation
+FE-4: AI Suggest UI/Add AI suggest button + display result,2,4,,Integrates with `/ai/suggest`
+FE-5: UI Styling/Add basic responsive styling,1,2,,Keep simple/clarity over flair
