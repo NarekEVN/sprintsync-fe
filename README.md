@@ -1,12 +1,76 @@
-# React + Vite
+# SprintSync Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend for SprintSync, a project management application.
 
-Currently, two official plugins are available:
+## 🚀 Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- ⚡ [Vite](https://vitejs.dev/) - Frontend tooling
+- ⚛️ [React 18](https://reactjs.org/) - UI library
+- 🎨 [Tailwind CSS](https://tailwindcss.com/) - Styling
+- 🚀 [React Router](https://reactrouter.com/) - Routing
+- 🔄 [React Query](https://tanstack.com/query) - Data fetching
+- 🛠 [TypeScript](https://www.typescriptlang.org/) - Type checking
 
-## Expanding the ESLint configuration
+## 🛠 Setup
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. **Prerequisites**
+    - Node.js v20.19.4
+    - npm (comes with Node.js)
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Setup**
+    - Copy `.env.example` to `.env`
+    - Update the environment variables in `.env`
+
+4. **Running the application**
+   ```bash
+   # Development
+   npm run dev
+   
+   # Production
+   npm run build
+   ```
+
+## 🔧 Development
+
+- **Linting**
+  ```bash
+  npm run lint
+  ```
+
+## 🐳 Docker Support
+
+The application includes Docker support for both development and production environments.
+
+### Development with Docker Compose
+
+```bash
+
+$ docker-compose up
+
+# Stop the containers
+$ docker-compose down
+
+# View logs
+$ docker-compose logs -f
+```
+
+## 🌐 Live URL
+
+[Production URL](https://sprintsync-fe-production.up.railway.app)
+
+
+## Credentials
+
+### Admin
+`johndoe@example.com`
+`12345678`
+
+
+### User
+`johndoe1@example.com`
+`12345678`
