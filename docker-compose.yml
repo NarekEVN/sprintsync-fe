@@ -6,6 +6,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=${VITE_API_URL}
     container_name: sprintsync-frontend
     ports:
       - "${FRONTEND_PORT:-80}:80"
@@ -14,7 +16,3 @@ services:
     restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    # Example of how to set the backend URL via environment
-    # environment:
-    #   - BACKEND_URL=https://your-production-backend-url.com
-    # Or pass it when running: docker-compose run -e BACKEND_URL=...
