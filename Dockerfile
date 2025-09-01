@@ -6,42 +6,40 @@ WORKDIR /app
 # Copy package files first for better caching
 COPY package*.json ./
 
-# Install dependencies with verbose logging
+# Install dependencies
 RUN npm ci --verbose
 
 # Copy configuration files
-COPY tsconfig*.json ./
-COPY vite.config.js ./
-COPY index.html ./
-
-# Copy source code
-COPY public/ ./public/
-COPY src/ ./src/
+COPY . .
 
 # Set Node.js memory options for build
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
-# Build the application with build arg
-ARG VITE_API_URL
-ENV VITE_API_URL=$VITE_API_URL
-
-# Run build with error checking
-RUN npm run build && echo "Build completed successfully"
+# Build the application
+RUN npm run build
 
 # Production stage
 FROM nginx:alpine
 
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 # Copy built assets from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Add environment variable support
-RUN apk add --no-cache bash
-COPY docker-entrypoint.sh /
-RUN chmod +x /docker-entrypoint.sh
+# Set proper permissions
+RUN chown -R nginx:nginx /usr/share/nginx/html && \
+    chmod -R 755 /usr/share/nginx/html && \
+    chown -R nginx:nginx /var/cache/nginx && \
+    chown -R nginx:nginx /var/log/nginx && \
+    chown -R nginx:nginx /etc/nginx/conf.d
+
+# Run as non-root user
+RUN touch /var/run/nginx.pid && \
+    chown -R nginx:nginx /var/run/nginx.pid
 
 # Expose port 80
 EXPOSE 80
 
-# Start nginx with environment variable support
-ENTRYPOINT ["/docker-entrypoint.sh"]
+# Run nginx
 CMD ["nginx", "-g", "daemon off;"]
