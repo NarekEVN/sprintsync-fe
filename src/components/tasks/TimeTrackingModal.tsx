@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { XMarkIcon, ClockIcon, ChartBarIcon } from '@heroicons/react/24/outline'
 import { Task } from '../../lib/api/tasks'
 import { useTasksStore } from '../../store/tasks'
@@ -36,6 +36,19 @@ export function TimeTrackingModal({ task, isOpen, onClose }: TimeTrackingModalPr
     setMinutes('')
     onClose()
   }
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        handleClose()
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape)
+      return () => document.removeEventListener('keydown', handleEscape)
+    }
+  }, [isOpen])
 
   const getTimeInsights = () => {
     const currentTotal = task.totalMinutes

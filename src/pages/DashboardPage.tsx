@@ -1,12 +1,14 @@
 import { useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useTasksStore } from '../store/tasks'
-import { TaskStatus } from '../lib/api/tasks'
-import {useUsersStore} from "../store/users";
+import { useUsersStore } from '../store/users'
+import { useTaskStats } from '../hooks/useTaskStats'
+import { LoadingSpinner } from '../components/ui/LoadingSpinner'
+import { ErrorMessage } from '../components/ui/ErrorMessage'
 
 export function DashboardPage() {
   const { user } = useAuth()
-  const { tasks, loading, error } = useTasksStore()
+  const { tasks, loading, error, totalLoggedInMinutes } = useTasksStore()
   const tasksStore = useTasksStore()
   const usersStore = useUsersStore()
 
@@ -15,27 +17,16 @@ export function DashboardPage() {
     usersStore.fetchCurrentUser()
   }, [])
 
-  const getTaskStats = () => {
-    const total = tasks.length
-    const todo = tasks.filter(t => t.status === TaskStatus.TODO).length
-    const inProgress = tasks.filter(t => t.status === TaskStatus.IN_PROGRESS).length
-    const done = tasks.filter(t => t.status === TaskStatus.DONE).length
-    const totalTime = tasks.reduce((sum, t) => sum + t.totalMinutes, 0)
-    
-    return { total, todo, inProgress, done, totalTime }
-  }
+  useEffect(() => {
+    if (user && user.id) {
+      tasksStore.totalMinutes(user.id)
+    }
+  }, [user]);
 
-  const stats = getTaskStats()
+  const stats = useTaskStats(tasks)
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading dashboard...</p>
-        </div>
-      </div>
-    )
+    return <LoadingSpinner text="Loading dashboard..." />
   }
 
   return (
@@ -46,9 +37,10 @@ export function DashboardPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-md p-4">
-          <p className="text-red-700 text-sm">{error}</p>
-        </div>
+        <ErrorMessage 
+          message={error} 
+          onDismiss={() => tasksStore.setError(null)}
+        />
       )}
 
       {/* Task Overview Cards */}
@@ -121,7 +113,7 @@ export function DashboardPage() {
           <div className="ml-4">
             <p className="text-sm font-medium text-gray-600">Total Time Logged</p>
             <p className="text-2xl font-semibold text-gray-900">
-              {Math.floor(stats.totalTime / 60)}h {stats.totalTime % 60}m
+              {Math.floor(totalLoggedInMinutes / 60)}h {totalLoggedInMinutes % 60}m
             </p>
           </div>
         </div>

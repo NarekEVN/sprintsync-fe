@@ -5,12 +5,14 @@ type TasksState = {
   tasks: Task[]
   loading: boolean
   error: string | null
+  totalLoggedInMinutes: number
   fetchTasks: () => Promise<void>
   createTask: (task: CreateTaskRequest) => Promise<Task | null>
   updateTaskStatus: (taskId: string, status: TaskStatus) => Promise<void>
   updateTask: (taskId: string, updates: Partial<Task>) => Promise<void>
   deleteTask: (taskId: string) => Promise<void>
   updateTaskTime: (taskId: string, time: number) => Promise<void>
+  totalMinutes: (assigneeId: string) => Promise<void>
   setLoading: (loading: boolean) => void
   setError: (message: string | null) => void
 }
@@ -19,6 +21,7 @@ export const useTasksStore = create<TasksState>((set, get) => ({
   tasks: [],
   loading: false,
   error: null,
+  totalLoggedInMinutes: 0,
 
   fetchTasks: async () => {
     set({ loading: true, error: null })
@@ -26,7 +29,8 @@ export const useTasksStore = create<TasksState>((set, get) => ({
       const tasks = await tasksApi.getTasks()
       set({ tasks })
     } catch (error) {
-      set({ error: 'Failed to fetch tasks' })
+      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch tasks'
+      set({ error: errorMessage })
     } finally {
       set({ loading: false })
     }
@@ -106,6 +110,18 @@ export const useTasksStore = create<TasksState>((set, get) => ({
             task.id === taskId ? updatedTask : task
         )
       })
+    } catch (error) {
+      set({ error: 'Failed to update task status' })
+    } finally {
+      set({ loading: false })
+    }
+  },
+
+  totalMinutes: async (assigneeId) => {
+    set({ loading: true, error: null })
+    try {
+      const minutes = await tasksApi.getTotalMinutes(assigneeId)
+      set({ totalLoggedInMinutes: minutes })
     } catch (error) {
       set({ error: 'Failed to update task status' })
     } finally {

@@ -80,4 +80,9 @@ export const tasksApi = {
     const response = await api.post<{ description: string }>('/tasks/ai/suggest', { title })
     return response.data.description
   },
+
+  getTotalMinutes: async (assigneeId: string): Promise<number> => {
+    const response = await api.get(`/tasks/total-minutes/?assigneeId=${assigneeId}`)
+    return response.data.totalMinutes
+  }
 }

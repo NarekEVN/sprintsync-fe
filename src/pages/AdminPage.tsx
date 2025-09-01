@@ -4,13 +4,15 @@ import { useTasksStore } from '../store/tasks'
 import { useUsersStore } from '../store/users'
 import { UserProfile } from '../components/admin/UserProfile'
 import { UsersList } from '../components/admin/UsersList'
-import { TaskStatus } from '../lib/api/tasks'
+import { useTaskStats } from '../hooks/useTaskStats'
 import { UsersIcon, ClipboardDocumentListIcon, ClockIcon, ChartBarIcon } from '@heroicons/react/24/outline'
+import { LoadingSpinner } from '../components/ui/LoadingSpinner'
+import { ErrorMessage } from '../components/ui/ErrorMessage'
 
 export function AdminPage() {
   const { user, isAdmin, loading } = useAdmin()
-  const { tasks } = useTasksStore()
-  const { users } = useUsersStore()
+  const { tasks, error: tasksError } = useTasksStore()
+  const { users, error: usersError } = useUsersStore()
   const tasksStore = useTasksStore()
   const usersStore = useUsersStore()
 
@@ -20,14 +22,7 @@ export function AdminPage() {
   }, [])
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading admin panel...</p>
-        </div>
-      </div>
-    )
+    return <LoadingSpinner text="Loading admin panel..." />
   }
 
   if (!isAdmin) {
@@ -42,17 +37,7 @@ export function AdminPage() {
     )
   }
 
-  const getTaskStats = () => {
-    const total = tasks.length
-    const todo = tasks.filter(t => t.status === TaskStatus.TODO).length
-    const inProgress = tasks.filter(t => t.status === TaskStatus.IN_PROGRESS).length
-    const done = tasks.filter(t => t.status === TaskStatus.DONE).length
-    const totalTime = tasks.reduce((sum, t) => sum + t.totalMinutes, 0)
-    
-    return { total, todo, inProgress, done, totalTime }
-  }
-
-  const stats = getTaskStats()
+  const stats = useTaskStats(tasks)
 
   return (
     <section className="space-y-6">
@@ -60,6 +45,19 @@ export function AdminPage() {
         <h2 className="text-2xl font-semibold text-gray-900">Admin Dashboard</h2>
         <p className="text-gray-600 mt-1">Manage users and monitor system activity</p>
       </div>
+
+      {tasksError && (
+        <ErrorMessage 
+          message={tasksError} 
+          onDismiss={() => tasksStore.setError(null)}
+        />
+      )}
+      {usersError && (
+        <ErrorMessage 
+          message={usersError} 
+          onDismiss={() => usersStore.setError(null)}
+        />
+      )}
 
       {/* System Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

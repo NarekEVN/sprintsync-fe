@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { TaskStatus, tasksApi } from '../../lib/api/tasks'
 import { useTasksStore } from '../../store/tasks'
 import { XMarkIcon, SparklesIcon } from '@heroicons/react/24/outline'
@@ -37,6 +37,19 @@ export function CreateTaskModal({ isOpen, onClose }: CreateTaskModalProps) {
     setStatus(TaskStatus.TODO)
     onClose()
   }
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        handleClose()
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape)
+      return () => document.removeEventListener('keydown', handleEscape)
+    }
+  }, [isOpen])
 
   const generateDescription = async () => {
     if (!title.trim()) return

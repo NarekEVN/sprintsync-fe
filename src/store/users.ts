@@ -37,7 +37,8 @@ export const useUsersStore = create<UsersState>((set, get) => ({
       const users = await usersApi.getAllUsers()
       set({ users })
     } catch (error) {
-      set({ error: 'Failed to fetch users' })
+      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch users'
+      set({ error: errorMessage })
     } finally {
       set({ loading: false })
     }
