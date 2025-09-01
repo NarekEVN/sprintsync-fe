@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { Task, TaskStatus } from '../../lib/api/tasks'
 import { useTasksStore } from '../../store/tasks'
 import { ClockIcon, UserIcon } from '@heroicons/react/24/outline'
+import { TimeTrackingModal } from './TimeTrackingModal'
 
 type TaskCardProps = {
   task: Task
@@ -20,6 +22,7 @@ const statusLabels = {
 
 export function TaskCard({ task }: TaskCardProps) {
   const { updateTaskStatus } = useTasksStore()
+  const [isTimeTrackingOpen, setIsTimeTrackingOpen] = useState(false)
 
   const handleStatusChange = (newStatus: TaskStatus) => {
     if (newStatus !== task.status) {
@@ -64,6 +67,13 @@ export function TaskCard({ task }: TaskCardProps) {
       </div>
       
       <div className="flex gap-2">
+        <button
+          onClick={() => setIsTimeTrackingOpen(true)}
+          className="text-xs px-2 py-1 text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+        >
+          Track Time
+        </button>
+        
         {task.status !== TaskStatus.TODO && (
           <button
             onClick={() => handleStatusChange(TaskStatus.TODO)}
@@ -91,6 +101,12 @@ export function TaskCard({ task }: TaskCardProps) {
           </button>
         )}
       </div>
+
+      <TimeTrackingModal
+        task={task}
+        isOpen={isTimeTrackingOpen}
+        onClose={() => setIsTimeTrackingOpen(false)}
+      />
     </div>
   )
 }

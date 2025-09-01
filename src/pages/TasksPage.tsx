@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
-import { PlusIcon } from '@heroicons/react/24/outline'
+import { PlusIcon, SparklesIcon } from '@heroicons/react/24/outline'
 import { useTasksStore } from '../store/tasks'
 import { TaskBoard } from '../components/tasks/TaskBoard'
 import { CreateTaskModal } from '../components/tasks/CreateTaskModal'
+import { AITaskAssistant } from '../components/tasks/AITaskAssistant'
 
 export function TasksPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
+  const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false)
   const { tasks, loading, error, fetchTasks } = useTasksStore()
 
   useEffect(() => {
@@ -31,13 +33,23 @@ export function TasksPage() {
           <p className="text-gray-600 mt-1">Manage your project tasks and track progress</p>
         </div>
         
-        <button
-          onClick={() => setIsCreateModalOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
-        >
-          <PlusIcon className="h-4 w-4" />
-          New Task
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={() => setIsAIAssistantOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-md hover:from-purple-700 hover:to-indigo-700 transition-colors"
+          >
+            <SparklesIcon className="h-4 w-4" />
+            AI Assistant
+          </button>
+          
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+          >
+            <PlusIcon className="h-4 w-4" />
+            New Task
+          </button>
+        </div>
       </div>
 
       {error && (
@@ -51,6 +63,11 @@ export function TasksPage() {
       <CreateTaskModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
+      />
+
+      <AITaskAssistant
+        isOpen={isAIAssistantOpen}
+        onClose={() => setIsAIAssistantOpen(false)}
       />
     </section>
   )

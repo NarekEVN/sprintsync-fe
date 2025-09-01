@@ -47,6 +47,8 @@ export function CreateTaskModal({ isOpen, onClose }: CreateTaskModalProps) {
       setDescription(suggestedDescription)
     } catch (error) {
       console.error('Failed to generate description:', error)
+      // Fallback to a basic suggestion if AI fails
+      setDescription(`Complete the task: ${title.trim()}. Consider breaking it down into smaller steps if needed.`)
     } finally {
       setIsGeneratingDescription(false)
     }
