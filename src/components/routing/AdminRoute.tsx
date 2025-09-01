@@ -8,7 +8,6 @@ type AdminRouteProps = {
 export function AdminRoute({ children }: AdminRouteProps) {
   const { isAdmin, loading } = useAdmin()
 
-  // Show loading while checking admin status
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -20,7 +19,6 @@ export function AdminRoute({ children }: AdminRouteProps) {
     )
   }
 
-  // Redirect to dashboard if not admin
   if (!isAdmin) {
     return <Navigate to="/" replace />
   }

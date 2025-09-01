@@ -46,7 +46,7 @@ export function AppLayout() {
                   className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
                 >
                   <UserIcon className="h-4 w-4" />
-                  {user?.name || user?.email}
+                  {(user && user.firstName) || 'Sign in'}
                 </button>
                 
                 {userMenuOpen && (

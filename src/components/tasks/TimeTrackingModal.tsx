@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { XMarkIcon, ClockIcon, ChartBarIcon } from '@heroicons/react/24/outline'
-import { Task, tasksApi } from '../../lib/api/tasks'
+import { Task } from '../../lib/api/tasks'
 import { useTasksStore } from '../../store/tasks'
 
 type TimeTrackingModalProps = {
@@ -11,13 +11,12 @@ type TimeTrackingModalProps = {
 
 export function TimeTrackingModal({ task, isOpen, onClose }: TimeTrackingModalProps) {
   const [minutes, setMinutes] = useState('')
-  const [description, setDescription] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { updateTaskTime } = useTasksStore()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!minutes || !description.trim()) return
+    if (!minutes) return
 
     const timeValue = parseInt(minutes)
     if (isNaN(timeValue) || timeValue <= 0) return
@@ -35,7 +34,6 @@ export function TimeTrackingModal({ task, isOpen, onClose }: TimeTrackingModalPr
 
   const handleClose = () => {
     setMinutes('')
-    setDescription('')
     onClose()
   }
 
@@ -72,7 +70,6 @@ export function TimeTrackingModal({ task, isOpen, onClose }: TimeTrackingModalPr
         </div>
 
         <div className="p-6 space-y-6">
-          {/* Task Info */}
           <div className="bg-gray-50 rounded-lg p-4">
             <h3 className="font-medium text-gray-900 mb-2">{task.title}</h3>
             <div className="flex items-center gap-4 text-sm text-gray-600">
@@ -81,7 +78,6 @@ export function TimeTrackingModal({ task, isOpen, onClose }: TimeTrackingModalPr
             </div>
           </div>
 
-          {/* Time Insights */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
               <ChartBarIcon className="h-4 w-4 text-blue-600" />
@@ -96,7 +92,6 @@ export function TimeTrackingModal({ task, isOpen, onClose }: TimeTrackingModalPr
             </div>
           </div>
 
-          {/* Time Entry Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="minutes" className="block text-sm font-medium text-gray-700 mb-1">
@@ -118,21 +113,6 @@ export function TimeTrackingModal({ task, isOpen, onClose }: TimeTrackingModalPr
               </p>
             </div>
 
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-                What did you work on? *
-              </label>
-              <textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="Describe what you accomplished during this time..."
-                required
-              />
-            </div>
-
             <div className="flex gap-3 pt-4">
               <button
                 type="button"
@@ -143,7 +123,7 @@ export function TimeTrackingModal({ task, isOpen, onClose }: TimeTrackingModalPr
               </button>
               <button
                 type="submit"
-                disabled={!minutes || !description.trim() || isSubmitting}
+                disabled={!minutes || isSubmitting}
                 className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isSubmitting ? 'Saving...' : 'Save Time Entry'}

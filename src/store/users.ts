@@ -7,6 +7,7 @@ type UsersState = {
   loading: boolean
   error: string | null
   fetchCurrentUser: () => Promise<void>
+  fetchAllUsers: () => Promise<void>
   updateUser: (userId: string, updates: Partial<User>) => Promise<void>
   deleteUser: (userId: string) => Promise<void>
   setLoading: (loading: boolean) => void
@@ -26,6 +27,17 @@ export const useUsersStore = create<UsersState>((set, get) => ({
       set({ currentUser: user })
     } catch (error) {
       set({ error: 'Failed to fetch current user' })
+    } finally {
+      set({ loading: false })
+    }
+  },
+
+  fetchAllUsers: async () => {
+    try {
+      const users = await usersApi.getAllUsers()
+      set({ users })
+    } catch (error) {
+      set({ error: 'Failed to fetch users' })
     } finally {
       set({ loading: false })
     }

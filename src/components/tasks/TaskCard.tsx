@@ -61,7 +61,7 @@ export function TaskCard({ task }: TaskCardProps) {
         {task.assignee && (
           <div className="flex items-center gap-1">
             <UserIcon className="h-3 w-3" />
-            <span>{task.assignee.name || task.assignee.email}</span>
+            <span>{task.assignee.firstName}</span>
           </div>
         )}
       </div>

@@ -1,15 +1,16 @@
 import { create } from 'zustand'
-import { Task, TaskStatus, tasksApi } from '../lib/api/tasks'
+import {Task, TaskStatus, tasksApi, CreateTaskRequest} from '../lib/api/tasks'
 
 type TasksState = {
   tasks: Task[]
   loading: boolean
   error: string | null
   fetchTasks: () => Promise<void>
-  createTask: (task: Omit<Task, 'id' | 'creator' | 'assignee' | 'totalMinutes' | 'createdAt' | 'updatedAt'>) => Promise<Task | null>
+  createTask: (task: CreateTaskRequest) => Promise<Task | null>
   updateTaskStatus: (taskId: string, status: TaskStatus) => Promise<void>
   updateTask: (taskId: string, updates: Partial<Task>) => Promise<void>
   deleteTask: (taskId: string) => Promise<void>
+  updateTaskTime: (taskId: string, time: number) => Promise<void>
   setLoading: (loading: boolean) => void
   setError: (message: string | null) => void
 }
@@ -85,12 +86,28 @@ export const useTasksStore = create<TasksState>((set, get) => ({
   deleteTask: async (taskId) => {
     set({ loading: true, error: null })
     try {
-      // Note: Backend doesn't have delete endpoint, so we'll just remove from local state
+      // TODO: add BE endpoint
       set({
         tasks: get().tasks.filter(task => task.id !== taskId)
       })
     } catch (error) {
       set({ error: 'Failed to delete task' })
+    } finally {
+      set({ loading: false })
+    }
+  },
+
+  updateTaskTime: async (taskId, time) => {
+    set({loading: true, error: null})
+    try {
+      const updatedTask = await tasksApi.updateTaskTime(taskId, time)
+      set({
+        tasks: get().tasks.map(task =>
+            task.id === taskId ? updatedTask : task
+        )
+      })
+    } catch (error) {
+      set({ error: 'Failed to update task status' })
     } finally {
       set({ loading: false })
     }

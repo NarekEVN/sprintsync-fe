@@ -3,8 +3,9 @@ import { create } from 'zustand'
 export type AuthUser = {
   id: string
   email: string
-  name?: string
-  role?: 'user' | 'admin'
+  firstName: string
+  lastName: string
+  isAdmin: boolean
 }
 
 type AuthState = {

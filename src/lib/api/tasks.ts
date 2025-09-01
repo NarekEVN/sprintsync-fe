@@ -1,4 +1,5 @@
 import { api } from './client'
+import { User } from "./users";
 
 export enum TaskStatus {
   TODO = 'TODO',
@@ -37,16 +38,8 @@ export type Task = {
   title: string
   description: string
   status: TaskStatus
-  creator: {
-    id: string
-    email: string
-    name?: string
-  }
-  assignee: {
-    id: string
-    email: string
-    name?: string
-  } | null
+  creator: User
+  assignee: User | null
   totalMinutes: number
   createdAt: string
   updatedAt: string

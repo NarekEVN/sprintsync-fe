@@ -1,17 +1,23 @@
 import { useEffect } from 'react'
 import { useAdmin } from '../hooks/useAdmin'
 import { useTasksStore } from '../store/tasks'
+import { useUsersStore } from '../store/users'
 import { UserProfile } from '../components/admin/UserProfile'
+import { UsersList } from '../components/admin/UsersList'
 import { TaskStatus } from '../lib/api/tasks'
 import { UsersIcon, ClipboardDocumentListIcon, ClockIcon, ChartBarIcon } from '@heroicons/react/24/outline'
 
 export function AdminPage() {
   const { user, isAdmin, loading } = useAdmin()
-  const { tasks, fetchTasks } = useTasksStore()
+  const { tasks } = useTasksStore()
+  const { users } = useUsersStore()
+  const tasksStore = useTasksStore()
+  const usersStore = useUsersStore()
 
   useEffect(() => {
-    fetchTasks()
-  }, [fetchTasks])
+    tasksStore.fetchTasks()
+    usersStore.fetchAllUsers()
+  }, [])
 
   if (loading) {
     return (
@@ -108,52 +114,15 @@ export function AdminPage() {
         </div>
       </div>
 
-      {/* User Management Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Current User Profile */}
+      <div className="space-y-6">
         <div>
           <h3 className="text-lg font-medium text-gray-900 mb-4">Your Profile</h3>
-          {user && <UserProfile user={user} canEdit={true} />}
+          {user && 'firstName' in user && <UserProfile user={user} canEdit={true} />}
         </div>
 
-        {/* Admin Tools */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium text-gray-900">Admin Tools</h3>
-          
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h4 className="font-medium text-gray-900 mb-3">User Management</h4>
-            <div className="space-y-3 text-sm text-gray-600">
-              <div className="flex items-center justify-between py-2 border-b border-gray-100">
-                <span>List All Users</span>
-                <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">Coming Soon</span>
-              </div>
-              <div className="flex items-center justify-between py-2 border-b border-gray-100">
-                <span>Create New Users</span>
-                <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">Coming Soon</span>
-              </div>
-              <div className="flex items-center justify-between py-2 border-b border-gray-100">
-                <span>Manage User Roles</span>
-                <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">Coming Soon</span>
-              </div>
-              <div className="flex items-center justify-between py-2">
-                <span>Delete Users</span>
-                <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">Available</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-            <h4 className="font-medium text-orange-900 mb-2">⚠️ Backend Requirements</h4>
-            <div className="text-sm text-orange-800 space-y-1">
-              <p>To enable full admin functionality, the following backend endpoints are needed:</p>
-              <ul className="list-disc list-inside mt-2 space-y-1">
-                <li><code>GET /users</code> - List all users</li>
-                <li><code>POST /users</code> - Create new user (admin only)</li>
-                <li><code>PATCH /users/:id/role</code> - Update user role</li>
-                <li><code>GET /admin/analytics</code> - System analytics</li>
-              </ul>
-            </div>
-          </div>
+        <div>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">User Management</h3>
+          <UsersList users={users} />
         </div>
       </div>
     </section>

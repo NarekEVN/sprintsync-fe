@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { useAuthStore } from '../store/auth'
 import { authApi } from '../lib/api/auth'
-import { AxiosError } from 'axios'
+import {usersApi} from "../lib/api/users";
 
 export function useAuth() {
   const { user, loading, error, setUser, setLoading, setError, logout } = useAuthStore()
@@ -13,23 +13,23 @@ export function useAuth() {
       
       const response = await authApi.login({ email, password })
       
-      // Store tokens
       localStorage.setItem('access_token', response.accessToken)
       localStorage.setItem('refresh_token', response.refreshToken)
-      localStorage.setItem('user_email', email) // Store for auth initialization
-      
-      // For now, we'll decode user info from token or make a separate call
-      // This is a simplified approach - in production you'd decode JWT or call /me endpoint
+      localStorage.setItem('user_email', email)
+
+      const currentUser = await usersApi.getCurrentUser()
+
       setUser({
-        id: 'temp-id', // Would come from JWT decode or /me endpoint
-        email,
-        name: email.split('@')[0], // Temporary - should come from backend
+        id: currentUser.id,
+        firstName: currentUser.firstName,
+        lastName: currentUser.lastName,
+        email: currentUser.email,
+        isAdmin: currentUser.isAdmin,
       })
       
       return true
     } catch (err) {
-      const error = err as AxiosError
-      setError(error.response?.data?.message || 'Login failed')
+      setError('Login failed')
       return false
     } finally {
       setLoading(false)

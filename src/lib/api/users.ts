@@ -23,7 +23,7 @@ export type CreateUserRequest = {
 
 export const usersApi = {
   getCurrentUser: async (): Promise<User> => {
-    const response = await api.get<User>('/users/current-users')
+    const response = await api.get<User>('/users/current-user')
     return response.data
   },
 
@@ -36,14 +36,8 @@ export const usersApi = {
     await api.delete(`/users/${userId}`)
   },
 
-  // Note: These endpoints are not available in the backend yet
-  // getAllUsers: async (): Promise<User[]> => {
-  //   const response = await api.get<User[]>('/users')
-  //   return response.data
-  // },
-
-  // createUser: async (user: CreateUserRequest): Promise<User> => {
-  //   const response = await api.post<User>('/users', user)
-  //   return response.data
-  // },
+  getAllUsers: async (): Promise<User[]> => {
+    const response = await api.get<User[]>('/users')
+    return response.data
+  },
 }

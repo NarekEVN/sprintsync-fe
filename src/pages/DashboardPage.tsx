@@ -1,17 +1,19 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { useTasksStore } from '../store/tasks'
 import { TaskStatus } from '../lib/api/tasks'
-import { AITaskAssistant } from '../components/tasks/AITaskAssistant'
+import {useUsersStore} from "../store/users";
 
 export function DashboardPage() {
   const { user } = useAuth()
-  const { tasks, loading, error, fetchTasks } = useTasksStore()
-  const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(false)
+  const { tasks, loading, error } = useTasksStore()
+  const tasksStore = useTasksStore()
+  const usersStore = useUsersStore()
 
   useEffect(() => {
-    fetchTasks()
-  }, [fetchTasks])
+    tasksStore.fetchTasks()
+    usersStore.fetchCurrentUser()
+  }, [])
 
   const getTaskStats = () => {
     const total = tasks.length
@@ -40,7 +42,7 @@ export function DashboardPage() {
     <section className="space-y-6">
       <div>
         <h2 className="text-2xl font-semibold text-gray-900">Dashboard</h2>
-        <p className="text-gray-600 mt-1">Welcome back, {user?.name || user?.email}!</p>
+        <p className="text-gray-600 mt-1">Welcome back, {user?.firstName}!</p>
       </div>
 
       {error && (
@@ -108,28 +110,6 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* AI Assistant Section */}
-      <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-medium text-indigo-900 mb-2">🤖 AI Task Assistant</h3>
-            <p className="text-indigo-700 text-sm">
-              Get intelligent suggestions for daily planning and workflow optimization
-            </p>
-          </div>
-          <button
-            onClick={() => setIsAIAssistantOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            Open AI Assistant
-          </button>
-        </div>
-      </div>
-
-      {/* Time Tracking Summary */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
         <h3 className="text-lg font-medium text-gray-900 mb-3">Time Tracking Summary</h3>
         <div className="flex items-center">
@@ -146,11 +126,6 @@ export function DashboardPage() {
           </div>
         </div>
       </div>
-
-      <AITaskAssistant
-        isOpen={isAIAssistantOpen}
-        onClose={() => setIsAIAssistantOpen(false)}
-      />
     </section>
   )
 }
