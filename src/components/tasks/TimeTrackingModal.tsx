@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { XMarkIcon, ClockIcon, ChartBarIcon } from '@heroicons/react/24/outline'
+import { XMarkIcon, ClockIcon } from '@heroicons/react/24/outline'
 import { Task } from '../../lib/api/tasks'
 import { useTasksStore } from '../../store/tasks'
 
@@ -10,7 +10,7 @@ type TimeTrackingModalProps = {
 }
 
 export function TimeTrackingModal({ task, isOpen, onClose }: TimeTrackingModalProps) {
-  const [minutes, setMinutes] = useState('')
+  const [minutes, setMinutes] = useState<number>(task.totalMinutes || 0)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { updateTaskTime } = useTasksStore()
 
@@ -18,7 +18,7 @@ export function TimeTrackingModal({ task, isOpen, onClose }: TimeTrackingModalPr
     e.preventDefault()
     if (!minutes) return
 
-    const timeValue = parseInt(minutes)
+    const timeValue = minutes
     if (isNaN(timeValue) || timeValue <= 0) return
 
     setIsSubmitting(true)
@@ -33,7 +33,7 @@ export function TimeTrackingModal({ task, isOpen, onClose }: TimeTrackingModalPr
   }
 
   const handleClose = () => {
-    setMinutes('')
+    setMinutes(0)
     onClose()
   }
 
@@ -52,13 +52,9 @@ export function TimeTrackingModal({ task, isOpen, onClose }: TimeTrackingModalPr
 
   const getTimeInsights = () => {
     const currentTotal = task.totalMinutes
-    const avgPerSession = currentTotal > 0 ? Math.round(currentTotal / Math.max(1, Math.ceil(currentTotal / 30))) : 0
-    
+
     return {
       currentTotal,
-      avgPerSession,
-      suggestedTime: avgPerSession > 0 ? Math.round(avgPerSession * 1.2) : 30, // 20% more than average
-      efficiency: currentTotal > 0 ? Math.round((currentTotal / (currentTotal + parseInt(minutes) || 0)) * 100) : 100
     }
   }
 
@@ -67,7 +63,7 @@ export function TimeTrackingModal({ task, isOpen, onClose }: TimeTrackingModalPr
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div onClick={event => event.stopPropagation()} className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
         <div className="flex items-center justify-between p-6 border-b">
           <div className="flex items-center gap-2">
@@ -87,21 +83,6 @@ export function TimeTrackingModal({ task, isOpen, onClose }: TimeTrackingModalPr
             <h3 className="font-medium text-gray-900 mb-2">{task.title}</h3>
             <div className="flex items-center gap-4 text-sm text-gray-600">
               <span>Total: {Math.floor(insights.currentTotal / 60)}h {insights.currentTotal % 60}m</span>
-              <span>Avg: {Math.floor(insights.avgPerSession / 60)}h {insights.avgPerSession % 60}m</span>
-            </div>
-          </div>
-
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <ChartBarIcon className="h-4 w-4 text-blue-600" />
-              <h4 className="font-medium text-blue-900">AI Insights</h4>
-            </div>
-            <div className="text-sm text-blue-800 space-y-1">
-              <p>• Suggested time for this session: {Math.floor(insights.suggestedTime / 60)}h {insights.suggestedTime % 60}m</p>
-              <p>• Current efficiency: {insights.efficiency}%</p>
-              {insights.currentTotal > 0 && (
-                <p>• You're on track with your time estimates</p>
-              )}
             </div>
           </div>
 
@@ -114,7 +95,7 @@ export function TimeTrackingModal({ task, isOpen, onClose }: TimeTrackingModalPr
                 type="number"
                 id="minutes"
                 value={minutes}
-                onChange={(e) => setMinutes(e.target.value)}
+                onChange={(e) => setMinutes(+e.target.value)}
                 min="1"
                 max="480"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"

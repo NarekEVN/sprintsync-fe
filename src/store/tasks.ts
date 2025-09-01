@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import {Task, TaskStatus, tasksApi, CreateTaskRequest} from '../lib/api/tasks'
+import {Task, TaskStatus, tasksApi, CreateTaskRequest, UpdateTaskRequest} from '../lib/api/tasks'
 
 type TasksState = {
   tasks: Task[]
@@ -9,7 +9,7 @@ type TasksState = {
   fetchTasks: () => Promise<void>
   createTask: (task: CreateTaskRequest) => Promise<Task | null>
   updateTaskStatus: (taskId: string, status: TaskStatus) => Promise<void>
-  updateTask: (taskId: string, updates: Partial<Task>) => Promise<void>
+  updateTask: (taskId: string, updates: UpdateTaskRequest) => Promise<void>
   deleteTask: (taskId: string) => Promise<void>
   updateTaskTime: (taskId: string, time: number) => Promise<void>
   totalMinutes: (assigneeId: string) => Promise<void>

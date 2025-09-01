@@ -15,10 +15,11 @@ export type CreateTaskRequest = {
 }
 
 export type UpdateTaskRequest = {
-  title?: string
-  description?: string
-  status?: TaskStatus
-  assigneeId?: string
+  title: string
+  description: string
+  status: TaskStatus
+  assigneeId: string | null,
+  totalMinutes: number
 }
 
 export type UpdateTaskStatusRequest = {

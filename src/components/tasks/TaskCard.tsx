@@ -3,6 +3,7 @@ import { Task, TaskStatus } from '../../lib/api/tasks'
 import { useTasksStore } from '../../store/tasks'
 import { ClockIcon, UserIcon } from '@heroicons/react/24/outline'
 import { TimeTrackingModal } from './TimeTrackingModal'
+import { TaskDetailModal } from './TaskDetailModal'
 
 type TaskCardProps = {
   task: Task
@@ -23,6 +24,7 @@ const statusLabels = {
 export function TaskCard({ task }: TaskCardProps) {
   const { updateTaskStatus } = useTasksStore()
   const [isTimeTrackingOpen, setIsTimeTrackingOpen] = useState(false)
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
 
   const handleStatusChange = (newStatus: TaskStatus) => {
     if (newStatus !== task.status) {
@@ -40,9 +42,9 @@ export function TaskCard({ task }: TaskCardProps) {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer group" onClick={() => setIsDetailModalOpen(true)}>
       <div className="flex items-start justify-between mb-3">
-        <h3 className="font-medium text-gray-900 text-sm leading-tight">{task.title}</h3>
+        <h3 className="font-medium text-gray-900 text-sm leading-tight group-hover:text-indigo-600 transition-colors">{task.title}</h3>
         <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusColors[task.status]}`}>
           {statusLabels[task.status]}
         </span>
@@ -61,12 +63,12 @@ export function TaskCard({ task }: TaskCardProps) {
         {task.assignee && (
           <div className="flex items-center gap-1">
             <UserIcon className="h-3 w-3" />
-            <span>{task.assignee.firstName}</span>
+            <span>{task.assignee.firstName} {task.assignee.lastName}</span>
           </div>
         )}
       </div>
       
-      <div className="flex gap-2">
+      <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
         <button
           onClick={() => setIsTimeTrackingOpen(true)}
           className="text-xs px-2 py-1 text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
@@ -106,6 +108,12 @@ export function TaskCard({ task }: TaskCardProps) {
         task={task}
         isOpen={isTimeTrackingOpen}
         onClose={() => setIsTimeTrackingOpen(false)}
+      />
+
+      <TaskDetailModal
+        task={task}
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
       />
     </div>
   )
