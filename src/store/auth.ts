@@ -26,6 +26,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   setError: (message) => set({ error: message }),
   logout: () => {
     localStorage.removeItem('access_token')
+    localStorage.removeItem('refresh_token')
+    localStorage.removeItem('user_email')
     set({ user: null })
   },
 }))

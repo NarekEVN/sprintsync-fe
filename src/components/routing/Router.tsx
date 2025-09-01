@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { AppLayout } from '../../layouts/AppLayout'
+import { ProtectedRoute } from './ProtectedRoute'
 import { DashboardPage } from '../../pages/DashboardPage'
 import { TasksPage } from '../../pages/TasksPage'
 import { LoginPage } from '../../pages/LoginPage'
@@ -9,7 +10,11 @@ import { NotFoundPage } from '../../pages/NotFoundPage'
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <AppLayout />,
+    element: (
+      <ProtectedRoute>
+        <AppLayout />
+      </ProtectedRoute>
+    ),
     children: [
       { index: true, element: <DashboardPage /> },
       { path: 'tasks', element: <TasksPage /> },

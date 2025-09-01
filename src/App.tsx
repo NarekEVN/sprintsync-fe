@@ -1,5 +1,10 @@
 import { AppRouter } from './components/routing/Router'
+import { AuthProvider } from './components/providers/AuthProvider'
 
 export default function App() {
-  return <AppRouter />
+  return (
+    <AuthProvider>
+      <AppRouter />
+    </AuthProvider>
+  )
 }

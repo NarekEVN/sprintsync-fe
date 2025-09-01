@@ -1,9 +1,12 @@
 import { Link, NavLink, Outlet } from 'react-router-dom'
-import { Bars3Icon } from '@heroicons/react/24/outline'
+import { Bars3Icon, UserIcon } from '@heroicons/react/24/outline'
 import { useState } from 'react'
+import { useAuth } from '../hooks/useAuth'
 
 export function AppLayout() {
   const [open, setOpen] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const { user, logout } = useAuth()
 
   const navItemStyles = ({ isActive }: { isActive: boolean }) =>
     `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-100'}`
@@ -19,17 +22,44 @@ export function AppLayout() {
               </button>
               <Link to="/" className="text-lg font-semibold">SprintSync</Link>
             </div>
-            <nav className="hidden sm:flex gap-1">
-              <NavLink to="/" className={navItemStyles} end>
-                Dashboard
-              </NavLink>
-              <NavLink to="/tasks" className={navItemStyles}>
-                Tasks
-              </NavLink>
-              <NavLink to="/admin" className={navItemStyles}>
-                Admin
-              </NavLink>
-            </nav>
+            <div className="hidden sm:flex items-center gap-4">
+              <nav className="flex gap-1">
+                <NavLink to="/" className={navItemStyles} end>
+                  Dashboard
+                </NavLink>
+                <NavLink to="/tasks" className={navItemStyles}>
+                  Tasks
+                </NavLink>
+                <NavLink to="/admin" className={navItemStyles}>
+                  Admin
+                </NavLink>
+              </nav>
+              
+              {/* User Menu */}
+              <div className="relative">
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+                >
+                  <UserIcon className="h-4 w-4" />
+                  {user?.name || user?.email}
+                </button>
+                
+                {userMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                    <button
+                      onClick={() => {
+                        logout()
+                        setUserMenuOpen(false)
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      Sign out
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
         {open && (
