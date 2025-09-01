@@ -14,6 +14,8 @@ COPY . .
 
 # Set Node.js memory options for build
 ENV NODE_OPTIONS="--max-old-space-size=4096"
+
+ARG VITE_API_URL
 ENV VITE_API_URL=$VITE_API_URL
 
 # Build the application
