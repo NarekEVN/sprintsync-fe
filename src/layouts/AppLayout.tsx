@@ -2,11 +2,13 @@ import { Link, NavLink, Outlet } from 'react-router-dom'
 import { Bars3Icon, UserIcon } from '@heroicons/react/24/outline'
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
+import { useAdmin } from '../hooks/useAdmin'
 
 export function AppLayout() {
   const [open, setOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const { user, logout } = useAuth()
+  const { isAdmin } = useAdmin()
 
   const navItemStyles = ({ isActive }: { isActive: boolean }) =>
     `px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'bg-gray-900 text-white' : 'text-gray-700 hover:bg-gray-100'}`
@@ -30,9 +32,11 @@ export function AppLayout() {
                 <NavLink to="/tasks" className={navItemStyles}>
                   Tasks
                 </NavLink>
-                <NavLink to="/admin" className={navItemStyles}>
-                  Admin
-                </NavLink>
+                {isAdmin && (
+                  <NavLink to="/admin" className={navItemStyles}>
+                    Admin
+                  </NavLink>
+                )}
               </nav>
               
               {/* User Menu */}
@@ -71,9 +75,11 @@ export function AppLayout() {
               <NavLink to="/tasks" className={navItemStyles} onClick={() => setOpen(false)}>
                 Tasks
               </NavLink>
-              <NavLink to="/admin" className={navItemStyles} onClick={() => setOpen(false)}>
-                Admin
-              </NavLink>
+              {isAdmin && (
+                <NavLink to="/admin" className={navItemStyles} onClick={() => setOpen(false)}>
+                  Admin
+                </NavLink>
+              )}
             </div>
           </div>
         )}
